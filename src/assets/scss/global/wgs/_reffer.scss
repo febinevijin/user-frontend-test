@@ -1,0 +1,28 @@
+.reffer-div{
+    width: 40%;
+    margin-bottom: 2rem;
+
+    label{
+        margin-bottom: .25rem;
+        font-size: 15px;
+    }
+
+    .reffer{
+        display: flex;
+        align-items: center;
+
+        .form-control{
+            border-radius: 4px 0 0 4px;
+        }
+
+        button{
+            border-radius: 0 4px 4px 0;
+        }
+    }
+}
+
+@media (max-width:413px) {
+    .reffer-div {
+        width: 100%;
+    }
+}

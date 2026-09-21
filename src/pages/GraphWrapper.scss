@@ -1,0 +1,370 @@
+.graph-dashboard-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  position: relative;
+
+  .dashboard-chart-card {
+    background: linear-gradient(145deg, rgba(16, 26, 18, 0.85) 0%, rgba(10, 16, 12, 0.95) 100%);
+    border: 1px solid rgba(70, 105, 65, 0.38);
+    border-top: 1px solid rgba(110, 165, 104, 0.55);
+    border-radius: 16px;
+    padding: 1.35rem 1.5rem;
+    position: relative;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(182, 243, 170, 0.15);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+
+    &:hover {
+      border-color: rgba(92, 224, 170, 0.5);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45), 0 0 24px rgba(92, 224, 170, 0.08);
+    }
+
+    .chart-card-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+      .header-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        .card-icon-box {
+          width: 38px;
+          height: 38px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.15rem;
+          flex-shrink: 0;
+
+          &.green {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+          }
+
+          &.blue {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+          }
+
+          &.purple {
+            background: rgba(129, 140, 248, 0.15);
+            color: #818cf8;
+            border: 1px solid rgba(129, 140, 248, 0.3);
+          }
+
+          &.gold {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+          }
+        }
+
+        .header-texts {
+          h5 {
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+          }
+
+          p {
+            margin: 0.15rem 0 0;
+            font-size: 0.8rem;
+            color: #8fa4b8;
+          }
+        }
+      }
+
+      .header-legend-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+
+        .legend-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          padding: 0.28rem 0.75rem;
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: #94a3b8;
+
+          .chip-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+          }
+
+          &.investment {
+            .chip-dot {
+              background-color: #5ce0aa;
+              box-shadow: 0 0 6px #5ce0aa;
+            }
+          }
+
+          &.deposit {
+            .chip-dot {
+              background-color: #38bdf8;
+              box-shadow: 0 0 6px #38bdf8;
+            }
+          }
+
+          &.payout {
+            .chip-dot {
+              background-color: #ff5c75;
+              box-shadow: 0 0 6px #ff5c75;
+            }
+          }
+
+          &.bonus {
+            .chip-dot {
+              background-color: #f9db7b;
+              box-shadow: 0 0 6px #f9db7b;
+            }
+          }
+
+          &.interest {
+            .chip-dot {
+              background-color: #818cf8;
+              box-shadow: 0 0 6px #818cf8;
+            }
+          }
+        }
+
+        .stat-badge {
+          background: rgba(92, 224, 170, 0.12);
+          border: 1px solid rgba(92, 224, 170, 0.3);
+          color: #5ce0aa;
+          padding: 0.28rem 0.75rem;
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-weight: 700;
+        }
+      }
+    }
+
+    .chart-canvas-box {
+      position: relative;
+      width: 100%;
+
+      &.tall {
+        height: 310px;
+      }
+
+      &.medium {
+        height: 250px;
+      }
+    }
+  }
+}
+
+/* Custom styling for Bottom Trade Profit & Referral Link Cards */
+.bottom-info-card {
+  background: linear-gradient(145deg, rgba(16, 26, 18, 0.85) 0%, rgba(10, 16, 12, 0.95) 100%);
+  border: 1px solid rgba(70, 105, 65, 0.38) !important;
+  border-top: 1px solid rgba(110, 165, 104, 0.55) !important;
+  border-radius: 16px;
+  padding: 1.35rem 1.5rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(182, 243, 170, 0.15);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    border-color: rgba(92, 224, 170, 0.5) !important;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45), 0 0 24px rgba(92, 224, 170, 0.08);
+  }
+
+  .card-top-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.15rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+    .card-top-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+
+      &.gold {
+        background: rgba(244, 189, 14, 0.15);
+        color: #f4bd0e;
+        border: 1px solid rgba(244, 189, 14, 0.3);
+      }
+
+      &.green {
+        background: rgba(92, 224, 170, 0.15);
+        color: #5ce0aa;
+        border: 1px solid rgba(92, 224, 170, 0.3);
+      }
+    }
+
+    .card-top-texts {
+      h5 {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #ffffff;
+      }
+
+      p {
+        margin: 0.15rem 0 0;
+        font-size: 0.8rem;
+        color: #8fa4b8;
+      }
+    }
+  }
+
+  .profit-details-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    .profit-stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.65rem 0.85rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+
+      .stat-label {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        font-weight: 500;
+      }
+
+      .stat-val {
+        font-size: 0.95rem;
+        color: #ffffff;
+        font-weight: 700;
+
+        &.gold {
+          color: #f4bd0e;
+          font-size: 1.05rem;
+        }
+      }
+    }
+
+    .profit-message-box {
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      background: rgba(244, 189, 14, 0.08);
+      border: 1px solid rgba(244, 189, 14, 0.25);
+      color: #f4bd0e;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  .referral-action-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+
+    .referral-copy-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      .form-control {
+        background: rgba(10, 16, 12, 0.8) !important;
+        border: 1px solid rgba(70, 105, 65, 0.5) !important;
+        color: #e2e8f0 !important;
+        border-radius: 8px !important;
+        padding: 0.55rem 0.85rem !important;
+        font-size: 0.85rem !important;
+      }
+
+      .copy-btn {
+        background: linear-gradient(135deg, #f4bd0e 0%, #d49f04 100%) !important;
+        border: none !important;
+        color: #0b160f !important;
+        font-weight: 700 !important;
+        border-radius: 8px !important;
+        padding: 0.55rem 1rem !important;
+        box-shadow: 0 4px 12px rgba(244, 189, 14, 0.25) !important;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        transition: transform 0.15s ease;
+
+        &:hover {
+          transform: translateY(-1px);
+        }
+      }
+    }
+
+    .referral-alert-box {
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      color: #f59e0b;
+      font-size: 0.825rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .copied-toast-pill {
+      font-size: 0.8rem;
+      color: #5ce0aa;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .graph-dashboard-flow {
+    .dashboard-chart-card {
+      padding: 1rem;
+
+      .chart-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .chart-canvas-box.tall {
+        height: 250px;
+      }
+
+      .chart-canvas-box.medium {
+        height: 210px;
+      }
+    }
+  }
+
+  .bottom-info-card {
+    padding: 1rem;
+  }
+}

@@ -1,0 +1,119 @@
+// pricing tables
+.pricing{
+    position: relative;
+    height: 100%;
+    border-radius: 20px;
+    
+    &-badge{
+        position: absolute;
+        right: .5rem;
+        top: .5rem;
+    }
+    &-head{
+        text-align: center;
+        padding: 1.75rem 1.5rem;
+    }
+    &-title{
+        .title{
+            margin-bottom: 0.25rem;
+            font-size: 26px;
+            color: $accent-color;
+        }
+        &:not(:last-child){
+            padding-bottom: 1.25rem;
+        }
+
+        .sub-text{
+            font-size: 20px;
+            font-weight: 400;
+        }
+    }
+    &-body{
+        padding: 1.75rem 1.75rem 2rem;
+    }
+    &-features{
+        li{
+            display: flex;
+            padding: .25rem 0;
+        }
+    }
+    &-action{
+        margin-top: 1.5rem;
+        text-align: center;
+    }
+    &-media {
+		padding: 0.25rem 0;
+		margin-bottom: 1.5rem;
+		img {
+			max-width: 90px;
+		}
+	}
+	&-amount {
+		font-size: 0.875rem;
+        color: $base-light;
+        .amount {
+        	font-size: 1.5rem;
+	        font-weight: $fw-bold;
+	        color: $body-color;
+        }
+	}
+
+    .card-text{
+        text-align: center;
+
+        .profitPer{
+            position: relative;
+            left: -24px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            padding: .5rem;
+            border-radius: 0 2rem 20rem 0;
+            background-color: $accent-100;
+            color: $black;
+            border: 1px solid $accent-color;
+            margin-bottom: 1rem;
+            font-size: 16px;
+            border-left: unset;
+
+            span{
+                font-size: 15px;
+                margin-left: .5rem;
+                margin-top: 3px;
+            }
+        }
+
+        .list{
+            font-size: 16px;
+            padding: 0.5rem 0;
+            margin-bottom: 0;
+            text-align: center;
+            font-weight: 600;
+
+            // &:nth-last-child(1){
+            //     border-bottom: unset;
+            // }
+
+            // .icon{
+            //     margin-right: 1rem;
+            //     font-size: 22px;
+            // }
+
+            // .alert{
+            //     margin-left: 0.5rem;
+            //     padding: 5px;
+            //     width: auto;
+            //     font-weight: 600;
+            //     font-size: 13px;
+            //     letter-spacing: 0;
+            //     margin-left: auto;
+            // }
+        }
+
+        .note{
+            margin-top: 0.5rem;
+            font-weight: 500;
+            font-size: 16px;
+        }
+    }
+}

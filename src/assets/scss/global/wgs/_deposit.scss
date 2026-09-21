@@ -1,0 +1,209 @@
+.deposit-card {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    &-div {
+        width: 49%;
+        background-color: $card-bg;
+        border-radius: $border-radius-xxl;
+        border-bottom: 1px solid $border-light;
+        padding: 2rem;
+
+        &:nth-child(2) {
+            background-color: $base-dark;
+        }
+
+        .input-div {
+            position: relative;
+
+            label {
+                font-weight: 600;
+                margin-bottom: 0.25rem;
+            }
+
+            .form-control {
+                padding-right: 3.25rem;
+            }
+
+            .form-select {
+                margin-bottom: 1rem;
+            }
+
+            span {
+                position: absolute;
+                top: 40px;
+                right: 20px;
+                font-size: 14px;
+                font-weight: 600;
+                color: $accent-color;
+            }
+        }
+
+        .limit {
+            margin-bottom: 0;
+            color: $accent-color;
+            font-weight: 600;
+            margin-top: .5rem;
+        }
+
+        Button {
+            width: 100%;
+            margin-top: 1.5rem;
+            background-color: $accent-color;
+            color: $white;
+            font-size: 15px;
+        }
+
+        .depo-table {
+            width: 100%;
+
+            tr {
+                td {
+                    font-size: 16px;
+                    color: $base-100;
+
+                    &:nth-child(1) {
+                        text-align: left;
+                    }
+
+                    &:nth-child(2) {
+                        text-align: center;
+                    }
+
+                    &:nth-child(3) {
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.modal-content {
+    .modal-body {
+        .alert {
+
+            ul {
+                list-style-type: disc;
+                padding-left: 1rem;
+
+                li {
+                    span {
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+
+        .pay-details {
+            .btn {
+                &:nth-child(1) {
+                    margin-right: 1rem;
+                }
+
+                span {
+                    margin: 0;
+                    padding-left: 5px;
+                }
+            }
+        }
+
+        .reffer-section{
+            display: flex;
+            align-items: flex-end;
+
+            .reffer-div{
+                width: 100%;
+                margin-bottom: 0;
+                margin-right: 1rem;
+            }
+        }
+
+        .form-div {
+            padding-top: 2rem;
+
+            .input-div {
+                margin-top: 0.5rem;
+            }
+        }
+
+        .form-group{
+            margin-bottom: 1.25rem;
+
+            a{
+                margin-left: 1rem;
+            }
+        }
+    }
+}
+
+.tot-reffer{
+    border-radius: 20px;
+    background-color: $dark;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+
+    .nk-block-title{
+        color: $white;
+    }
+
+    .reffer{
+        h3{
+            color: $white;
+        }
+    }
+     ul{
+        .list{
+            list-style: disc;
+            font-size: .9rem;
+        }
+     }
+}
+
+.tradingview-widget-container{
+    width: 100% !important;
+}
+
+@media (max-width:413px) {
+    .deposit-card-div {
+        width: 100%;
+
+        &:nth-child(1) {
+            margin-bottom: 1rem;
+        }
+    }
+
+    .reffer-card{
+        margin-top: 1rem;
+    }
+}
+
+.scroll{
+    height: 100vh;
+    overflow: scroll;
+}
+
+.listTable {
+    overflow-x: scroll;
+
+    @include media-breakpoint-up(lg) {
+        overflow-x: hidden;
+    }
+}
+
+.days{
+    h5{
+        letter-spacing: .5px;
+    }
+}
+
+.profileImage{
+    img{
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 1rem;
+        object-fit: cover;
+    }
+}

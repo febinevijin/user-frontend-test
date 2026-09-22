@@ -101,7 +101,7 @@ const CryptoHomePage = () => {
       }
     };
     if (userInfo && userInfo.userName) {
-      setValue(`${process.env.REACT_APP_PUBLIC_URL}/auth-refer-register?referral=${userInfo.userName}`);
+      setValue(`https://user-frontend-test.vercel.app/auth-refer-register?referral=${userInfo.userName}`);
     }
     fetchDashboardData();
   }, [userInfo]);
@@ -780,7 +780,7 @@ const CryptoHomePage = () => {
                         <div className="referral-copy-box">
                           <Input
                             className="form-control"
-                            value={`${process.env.REACT_APP_PUBLIC_URL}/auth-refer-register?referral=${userReferralLink.userName}`}
+                            value={`https://user-frontend-test.vercel.app/auth-refer-register?referral=${userReferralLink.userName}`}
                             onChange={({ target: { value } }) => setValue(value)}
                             disabled
                           />

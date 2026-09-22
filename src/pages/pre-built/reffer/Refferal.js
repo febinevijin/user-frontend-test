@@ -44,7 +44,7 @@ const Refferal = () => {
             const { userName, linkStatus } = response.data.data;
             setLinkStatus(linkStatus);
             if (linkStatus) {
-              setValue(`${process.env.REACT_APP_PUBLIC_URL}/auth-refer-register?referral=${userName}`);
+              setValue(`https://user-frontend-test.vercel.app/auth-refer-register?referral=${userName}`);
             }
           }
         } catch (error) {

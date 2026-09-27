@@ -13,7 +13,7 @@ import {
   Col,
   Icon,
 } from "../../../components/Component";
-import { Modal, ModalBody, Spinner } from "reactstrap";
+import { Modal, ModalBody, Spinner, UncontrolledTooltip } from "reactstrap";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -447,8 +447,8 @@ const F10Purchase = () => {
             {/* Invest & Withdraw Callout Banner */}
             <div className="invest-callout-banner">
               <div className="banner-text-wrap">
-                <h5>Are you planning to invest or withdraw?</h5>
-                <p>Use your available wallet balance to invest in the F10 Plan or withdraw your funds securely.</p>
+                <h5>Are you planning to invest?</h5>
+                <p>Use your available wallet balance to invest in the F10 Plan your funds securely.</p>
               </div>
               <div className="banner-btn-group">
                 <button
@@ -464,15 +464,20 @@ const F10Purchase = () => {
                 </button>
                 <button
                   type="button"
-                  className="btn-withdraw-action"
-                  onClick={() => {
-                    setWithdrawModal(true);
-                    setWithdrawAmountError("");
-                  }}
+                  id="f10-invest-info-btn"
+                  className="btn-banner-info"
+                  aria-label="Investment Information"
                 >
-                  <Icon name="wallet-out" />
-                  <span>Withdraw</span>
+                  <Icon name="info" />
                 </button>
+                <UncontrolledTooltip
+                  placement="auto"
+                  trigger="legacy hover focus"
+                  target="f10-invest-info-btn"
+                  popperClassName="f10-custom-tooltip"
+                >
+                  F10 Investment means the company divides the investment fund into 10 different investment areas to diversify the fund. These areas may include gold, ETFs, cryptocurrencies, company stocks, real estate, and other investment opportunities.
+                </UncontrolledTooltip>
               </div>
             </div>
 
@@ -490,13 +495,26 @@ const F10Purchase = () => {
                   <div className="card-main-val">
                     ${investedAmount.toLocaleString()}
                   </div>
-                  <div className="balance-breakdown-sub">
-                    <span className="sub-item withdrawable">
-                      <Icon name="check-circle" /> Withdrawable: ${withdrawableBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </span>
-                    <span className="sub-item locked">
-                      <Icon name="lock" /> Locked: ${lockedBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </span>
+                  <div className="card-bottom-flex">
+                    <div className="balance-breakdown-sub">
+                      <span className="sub-item withdrawable">
+                        <Icon name="check-circle" /> Withdrawable: ${withdrawableBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                      <span className="sub-item locked">
+                        <Icon name="lock" /> Locked: ${lockedBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      className="btn-card-withdraw"
+                      onClick={() => {
+                        setWithdrawModal(true);
+                        setWithdrawAmountError("");
+                      }}
+                    >
+                      <Icon name="wallet-out" />
+                      <span>Withdraw</span>
+                    </button>
                   </div>
                 </div>
               </Col>

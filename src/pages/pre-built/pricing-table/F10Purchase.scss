@@ -44,6 +44,7 @@
         font-weight: 700;
         margin: 0 0 0.25rem;
       }
+
       p {
         color: #94a3b8;
         font-size: 0.82rem;
@@ -80,6 +81,36 @@
         transform: translateY(-1px);
         box-shadow: 0 5px 16px rgba(244, 189, 14, 0.4);
         color: #000;
+      }
+    }
+
+    .btn-banner-info {
+      background: rgba(244, 189, 14, 0.12);
+      border: 1px solid rgba(244, 189, 14, 0.35);
+      color: #f4bd0e;
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      padding: 0;
+
+      .icon {
+        font-size: 1.15rem;
+      }
+
+      &:hover,
+      &:focus-visible {
+        background: rgba(244, 189, 14, 0.25);
+        border-color: #f4bd0e;
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(244, 189, 14, 0.35);
+        outline: none;
       }
     }
   }
@@ -132,11 +163,13 @@
           color: #f4bd0e;
           border: 1px solid rgba(244, 189, 14, 0.3);
         }
+
         &.green {
           background: rgba(16, 185, 129, 0.15);
           color: #10b981;
           border: 1px solid rgba(16, 185, 129, 0.3);
         }
+
         &.red {
           background: rgba(239, 68, 68, 0.15);
           color: #ef4444;
@@ -163,6 +196,7 @@
       &.green {
         color: #10b981;
       }
+
       &.red {
         color: #ef4444;
       }
@@ -201,28 +235,79 @@
       }
     }
 
-    .balance-breakdown-sub {
-      margin-top: 0.65rem;
-      padding-top: 0.65rem;
+    .card-bottom-flex {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
       border-top: 1px solid rgba(255, 255, 255, 0.07);
       display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
       flex-wrap: wrap;
-      gap: 0.5rem 0.85rem;
-      font-size: 0.75rem;
 
-      .sub-item {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
+      .balance-breakdown-sub {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        font-size: 0.75rem;
 
-        &.withdrawable {
-          color: #10b981;
-          font-weight: 600;
+        @media (min-width: 992px) {
+          flex-direction: row;
+          align-items: center;
+          gap: 0.85rem;
         }
 
-        &.locked {
-          color: #f4bd0e;
-          font-weight: 600;
+        .sub-item {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.25rem;
+
+          &.withdrawable {
+            color: #10b981;
+            font-weight: 600;
+          }
+
+          &.locked {
+            color: #f4bd0e;
+            font-weight: 600;
+          }
+        }
+      }
+
+      .btn-card-withdraw {
+        background: linear-gradient(135deg, #f4bd0e 0%, #eab308 100%);
+        color: #0b0f0c;
+        font-weight: 700;
+        font-size: 0.82rem;
+        padding: 0.35rem 0.95rem;
+        min-height: 32px;
+        border-radius: 8px;
+        border: none;
+        box-shadow: 0 3px 10px rgba(244, 189, 14, 0.28);
+        white-space: nowrap;
+        transition: all 0.25s ease;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin-left: auto;
+
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 5px 16px rgba(244, 189, 14, 0.4);
+          color: #000;
+        }
+
+        .icon {
+          font-size: 0.95rem;
+        }
+      }
+
+      @media (max-width: 575px) {
+        .btn-card-withdraw {
+          width: 100%;
+          justify-content: center;
+          margin-top: 0.25rem;
         }
       }
     }
@@ -268,16 +353,30 @@
       .banner-btn-group {
         width: 100%;
         display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.6rem;
       }
 
-      .btn-invest-action,
-      .btn-withdraw-action {
-        width: 100%;
+      .btn-invest-action {
+        flex: 1;
+        width: auto;
         justify-content: center;
-        padding: 0.4rem 0.9rem;
-        min-height: 36px;
+        padding: 0.45rem 1rem;
+        min-height: 38px;
+        font-size: 0.88rem;
+      }
+
+      .btn-banner-info {
+        flex-shrink: 0;
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        border-radius: 8px;
+
+        .icon {
+          font-size: 1.25rem;
+        }
       }
     }
 
@@ -287,35 +386,113 @@
       margin-bottom: 0.85rem;
     }
 
+    .row.g-gs {
+      --bs-gutter-x: 0.5rem;
+      --bs-gutter-y: 0.5rem;
+      margin-bottom: 0.85rem !important;
+    }
+
     .trading-metric-card {
-      padding: 0.85rem 1rem;
-      border-radius: 12px;
+      padding: 0.65rem 0.7rem !important;
+      border-radius: 12px !important;
+      height: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
 
       .card-header-flex {
-        margin-bottom: 0.35rem;
+        margin-bottom: 0.25rem !important;
 
         .card-label {
-          font-size: 0.68rem;
+          font-size: 0.64rem !important;
+          font-weight: 700 !important;
+          letter-spacing: 0.02em !important;
+          line-height: 1.2 !important;
+          color: #94a3b8 !important;
         }
 
         .card-icon-badge {
-          width: 26px;
-          height: 26px;
-          border-radius: 6px;
-          font-size: 0.85rem;
+          display: none !important;
         }
       }
 
       .card-main-val {
-        font-size: 1.25rem;
+        font-size: 1.25rem !important;
+        font-weight: 800 !important;
+        line-height: 1.15 !important;
+        margin-bottom: 0.15rem !important;
       }
 
-      .trend-pill {
-        font-size: 0.72rem;
-        padding: 0.15rem 0.45rem;
+      .card-bottom-flex {
+        margin-top: auto !important;
+        padding-top: 0.35rem !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.07) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.35rem !important;
+        width: 100% !important;
 
-        .arrow-symbol {
-          font-size: 0.75rem;
+        .balance-breakdown-sub {
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 0.15rem !important;
+          width: 100% !important;
+
+          .sub-item {
+            font-size: 0.64rem !important;
+            font-weight: 600 !important;
+            line-height: 1.2 !important;
+            display: block !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+
+            .icon {
+              display: none !important;
+            }
+          }
+        }
+
+        .btn-card-withdraw {
+          width: 100% !important;
+          min-height: 26px !important;
+          padding: 0.22rem 0.5rem !important;
+          font-size: 0.72rem !important;
+          font-weight: 700 !important;
+          border-radius: 6px !important;
+          justify-content: center !important;
+          margin-top: 0.15rem !important;
+
+          .icon {
+            display: none !important;
+          }
+        }
+      }
+
+      .market-val-wrap {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        margin-top: 0 !important;
+
+        .card-main-val {
+          margin-bottom: 0 !important;
+        }
+
+        .trend-pill {
+          margin: auto !important;
+          align-self: center !important;
+          font-size: 0.66rem !important;
+          font-weight: 700 !important;
+          padding: 0.18rem 0.45rem !important;
+          border-radius: 12px !important;
+          white-space: nowrap !important;
+
+          .arrow-symbol {
+            font-size: 0.68rem !important;
+          }
         }
       }
     }
@@ -434,6 +611,7 @@
         color: #94a3b8;
         margin-bottom: 0.25rem;
       }
+
       .wallet-val {
         font-size: 1.65rem;
         font-weight: 800;
@@ -558,6 +736,7 @@
   // Separated Balance Options (Deposit Balance vs Current Balance)
   .balance-select-header {
     margin-bottom: 0.5rem;
+
     .balance-select-label {
       font-size: 0.78rem;
       font-weight: 700;
@@ -599,9 +778,11 @@
           .option-name {
             color: #f4bd0e;
           }
+
           .option-radio-indicator {
             border-color: #f4bd0e;
             background: #f4bd0e;
+
             &::after {
               opacity: 1;
             }
@@ -709,6 +890,7 @@
         -webkit-appearance: none;
         margin: 0;
       }
+
       -moz-appearance: textfield;
     }
 
@@ -775,6 +957,7 @@
       .summary-label {
         color: #94a3b8;
       }
+
       .summary-value {
         font-weight: 700;
         color: #ffffff;
@@ -782,6 +965,7 @@
         &.green {
           color: #10b981;
         }
+
         &.gold {
           color: #f4bd0e;
         }
@@ -894,3 +1078,46 @@
   }
 }
 
+/* Scoped Tooltip for F10 Page */
+.f10-custom-tooltip {
+  opacity: 1 !important;
+  z-index: 1080 !important;
+
+  .tooltip-inner {
+    background: #0d1811 !important;
+    color: #f1f5f9 !important;
+    border: 1px solid rgba(244, 189, 14, 0.45) !important;
+    font-size: 0.78rem !important;
+    font-weight: 500 !important;
+    line-height: 1.45 !important;
+    padding: 0.65rem 0.85rem !important;
+    border-radius: 10px !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.75), 0 0 16px rgba(244, 189, 14, 0.15) !important;
+    max-width: 310px !important;
+    text-align: left !important;
+    letter-spacing: 0.01em !important;
+
+    @media (max-width: 575px) {
+      max-width: calc(100vw - 32px) !important;
+      font-size: 0.76rem !important;
+      padding: 0.6rem 0.75rem !important;
+    }
+  }
+
+  &.bs-tooltip-top .tooltip-arrow::before,
+  &[data-popper-placement^="top"] .tooltip-arrow::before {
+    border-top-color: #0d1811 !important;
+  }
+  &.bs-tooltip-bottom .tooltip-arrow::before,
+  &[data-popper-placement^="bottom"] .tooltip-arrow::before {
+    border-bottom-color: #0d1811 !important;
+  }
+  &.bs-tooltip-start .tooltip-arrow::before,
+  &[data-popper-placement^="left"] .tooltip-arrow::before {
+    border-left-color: #0d1811 !important;
+  }
+  &.bs-tooltip-end .tooltip-arrow::before,
+  &[data-popper-placement^="right"] .tooltip-arrow::before {
+    border-right-color: #0d1811 !important;
+  }
+}

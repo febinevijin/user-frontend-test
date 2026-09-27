@@ -202,27 +202,27 @@ const InvestHistory = () => {
     setStatusFilter(selectedOption.value);
   };
   // Fetch plan purchase history
-   const fetchPlanHistory = async () => {
-     try {
-       const response = await axiosInstance.get(
-         `/user/plan/history?userId${userInfo._id}&limit=${itemPerPage}&page=${currentPage}&status=${statusFilter}`,
-         {
-           headers: {
-             Authorization: `Bearer ${userInfo.token}`, // Assuming the token is in the adminInfo context
-           },
-         }
-       );
+  const fetchPlanHistory = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/user/plan/history?userId${userInfo._id}&limit=${itemPerPage}&page=${currentPage}&status=${statusFilter}`,
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`, // Assuming the token is in the adminInfo context
+          },
+        }
+      );
 
-       setPlanHistory(response.data.data.purchasedHistory); // Assuming response data is structured as shown
-       setTotal(Number(response.data.data.totalCount));
-       setLoading(false);
-     } catch (error) {
-       console.error("Error fetching plan history:", error);
-       setLoading(false);
-     }
-   };
+      setPlanHistory(response.data.data.purchasedHistory); // Assuming response data is structured as shown
+      setTotal(Number(response.data.data.totalCount));
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching plan history:", error);
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-   
+
 
     fetchPlanHistory();
   }, [userInfo.token, currentPage, itemPerPage]);
@@ -763,7 +763,8 @@ const InvestHistory = () => {
                       </span>
                     </DataTableRow> */}
                     <DataTableRow className='text-white'>
-                      <span>{item.maturityPeriod} months</span> {/* Convert return type enum */}
+                      {/* <span>{item.maturityPeriod} months</span> */}
+                      <span>Upto 2x</span>
                     </DataTableRow>
                     <DataTableRow className="text-nowrap text-white">
                       <span>{new Date(item.purchasedDate).toLocaleDateString()}</span>
@@ -778,15 +779,15 @@ const InvestHistory = () => {
                           item.status === PurchasedPlanHistoryStatusEnum.ACTIVE
                             ? "success"
                             : item.status === PurchasedPlanHistoryStatusEnum.COMPLETED
-                            ? "info"
-                            : "danger"
+                              ? "info"
+                              : "danger"
                         }
                       >
                         {item.status === PurchasedPlanHistoryStatusEnum.ACTIVE
                           ? "Active"
                           : item.status === PurchasedPlanHistoryStatusEnum.COMPLETED
-                          ? "Completed"
-                          : "Cancelled"}
+                            ? "Completed"
+                            : "Cancelled"}
                       </Badge>
                     </DataTableRow>
 

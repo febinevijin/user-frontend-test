@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
 import { Icon } from '../components/Component';
 import './GraphWrapper.scss';
@@ -31,6 +31,8 @@ ChartJS.register(
 const monthsLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const GraphWrapper = ({ graphData = [], weeklyInterest = [] }) => {
+  const [activeTab, setActiveTab] = useState("portfolio");
+
   // Normalize graphData safely without altering any data
   const safeGraphData = useMemo(() => {
     const list = Array.isArray(graphData) ? graphData : [];
@@ -215,93 +217,146 @@ const GraphWrapper = ({ graphData = [], weeklyInterest = [] }) => {
 
   return (
     <div className="graph-dashboard-flow">
-      {/* 1. Existing Main Investment Chart (Full Width) */}
-      <div className="dashboard-chart-card">
-        <div className="chart-card-header">
-          <div className="header-title-wrap">
-            <div className="card-icon-box green">
+      {/* 3 Graphs Tab Navigation */}
+      <div className="graph-tabs-nav-wrapper">
+        <div className="graph-tabs-nav">
+          <button
+            type="button"
+            className={`graph-tab-btn ${activeTab === "portfolio" ? "active" : ""}`}
+            onClick={() => setActiveTab("portfolio")}
+          >
+            <div className="tab-btn-icon green">
               <Icon name="trend-up" />
             </div>
-            <div className="header-texts">
-              <h5>Portfolio Inflow & Outflow Trends</h5>
-              <p>Monthly overview of Investment, Deposite, Payout and Investment Bonus</p>
+            <div className="tab-btn-content">
+              <span className="tab-title">Portfolio Trends</span>
+              <span className="tab-subtitle">Inflow & Outflow</span>
             </div>
-          </div>
+          </button>
 
-          <div className="header-legend-wrap">
-            <span className="legend-chip investment">
-              <span className="chip-dot"></span> Investment
-            </span>
-            <span className="legend-chip deposit">
-              <span className="chip-dot"></span> Deposite
-            </span>
-            <span className="legend-chip payout">
-              <span className="chip-dot"></span> Payout
-            </span>
-            <span className="legend-chip bonus">
-              <span className="chip-dot"></span> Investment Bonus
-            </span>
-          </div>
-        </div>
-
-        <div className="chart-canvas-box tall">
-          <Line data={annualLineChartData} options={commonChartOptions} />
-        </div>
-      </div>
-
-      {/* 2. Existing Weekly Interest Chart (Full Width) */}
-      <div className="dashboard-chart-card">
-        <div className="chart-card-header">
-          <div className="header-title-wrap">
-            <div className="card-icon-box purple">
+          <button
+            type="button"
+            className={`graph-tab-btn ${activeTab === "weekly" ? "active" : ""}`}
+            onClick={() => setActiveTab("weekly")}
+          >
+            <div className="tab-btn-icon purple">
               <Icon name="line-chart-up" />
             </div>
-            <div className="header-texts">
-              <h5>Weekly Interest Performance</h5>
-              <p>Daily percentage rate credited across the active trading cycle</p>
+            <div className="tab-btn-content">
+              <span className="tab-title">Weekly Interest</span>
+              <span className="tab-subtitle">Cycle Performance</span>
             </div>
-          </div>
+          </button>
 
-          <div className="header-legend-wrap">
-            <span className="legend-chip interest">
-              <span className="chip-dot"></span> Weekly Interest (%)
-            </span>
-            {safeWeeklyInterest.length > 0 && (
-              <span className="stat-badge">
-                {safeWeeklyInterest.length} Active Days
-              </span>
-            )}
-          </div>
-        </div>
-
-        <div className="chart-canvas-box medium">
-          <Line data={weeklyInterestLineData} options={commonChartOptions} />
+          <button
+            type="button"
+            className={`graph-tab-btn ${activeTab === "yield" ? "active" : ""}`}
+            onClick={() => setActiveTab("yield")}
+          >
+            <div className="tab-btn-icon gold">
+              <Icon name="coins" />
+            </div>
+            <div className="tab-btn-content">
+              <span className="tab-title">Daily Yield</span>
+              <span className="tab-subtitle">Rate Breakdown</span>
+            </div>
+          </button>
         </div>
       </div>
 
-      {/* 3. Daily Interest Yield Breakdown */}
-      <div className="dashboard-chart-card">
-        <div className="chart-card-header">
-          <div className="header-title-wrap">
-            <div className="card-icon-box gold">
-              <Icon name="coins" />
+      {/* Active Tab Graph Content */}
+      <div className="graph-tab-content">
+        {activeTab === "portfolio" && (
+          <div className="dashboard-chart-card tab-pane-enter">
+            <div className="chart-card-header">
+              <div className="header-title-wrap">
+                <div className="card-icon-box green">
+                  <Icon name="trend-up" />
+                </div>
+                <div className="header-texts">
+                  <h5>Portfolio Inflow & Outflow Trends</h5>
+                  <p>Monthly overview of Investment, Deposite, Payout and Investment Bonus</p>
+                </div>
+              </div>
+
+              <div className="header-legend-wrap">
+                <span className="legend-chip investment">
+                  <span className="chip-dot"></span> Investment
+                </span>
+                <span className="legend-chip deposit">
+                  <span className="chip-dot"></span> Deposite
+                </span>
+                <span className="legend-chip payout">
+                  <span className="chip-dot"></span> Payout
+                </span>
+                <span className="legend-chip bonus">
+                  <span className="chip-dot"></span> Investment Bonus
+                </span>
+              </div>
             </div>
-            <div className="header-texts">
-              <h5>Daily Yield Breakdown</h5>
-              <p>Interest rate percentage per trading day</p>
+
+            <div className="chart-canvas-box tall">
+              <Line data={annualLineChartData} options={commonChartOptions} />
             </div>
           </div>
+        )}
 
-          <div className="header-legend-wrap">
-            <span className="legend-chip interest">
-              <span className="chip-dot"></span> Daily Yield (%)
-            </span>
+        {activeTab === "weekly" && (
+          <div className="dashboard-chart-card tab-pane-enter">
+            <div className="chart-card-header">
+              <div className="header-title-wrap">
+                <div className="card-icon-box purple">
+                  <Icon name="line-chart-up" />
+                </div>
+                <div className="header-texts">
+                  <h5>Weekly Interest Performance</h5>
+                  <p>Daily percentage rate credited across the active trading cycle</p>
+                </div>
+              </div>
+
+              <div className="header-legend-wrap">
+                <span className="legend-chip interest">
+                  <span className="chip-dot"></span> Weekly Interest (%)
+                </span>
+                {safeWeeklyInterest.length > 0 && (
+                  <span className="stat-badge">
+                    {safeWeeklyInterest.length} Active Days
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="chart-canvas-box tall">
+              <Line data={weeklyInterestLineData} options={commonChartOptions} />
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="chart-canvas-box medium">
-          <Bar data={dailyYieldBarData} options={commonChartOptions} />
-        </div>
+        {activeTab === "yield" && (
+          <div className="dashboard-chart-card tab-pane-enter">
+            <div className="chart-card-header">
+              <div className="header-title-wrap">
+                <div className="card-icon-box gold">
+                  <Icon name="coins" />
+                </div>
+                <div className="header-texts">
+                  <h5>Daily Yield Breakdown</h5>
+                  <p>Interest rate percentage per trading day</p>
+                </div>
+              </div>
+
+              <div className="header-legend-wrap">
+                <span className="legend-chip interest">
+                  <span className="chip-dot"></span> Daily Yield (%)
+                </span>
+              </div>
+            </div>
+
+            <div className="chart-canvas-box tall">
+              <Bar data={dailyYieldBarData} options={commonChartOptions} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -64,6 +64,7 @@ import UserProfileActivity from "../pages/pre-built/user-manage/UserProfileActiv
 import TransListCrypto from "../pages/pre-built/trans-list/TransListCrypto";
 import PricingTable from "../pages/pre-built/pricing-table/PricingTable";
 import F10Purchase from "../pages/pre-built/pricing-table/F10Purchase";
+import F10InvestHistory from "../pages/pre-built/pricing-table/F10InvestHistory";
 import ReactToastify from "../pages/components/misc/ReactToastify";
 
 import DateTimePicker from "../pages/components/forms/DateTimePicker";
@@ -169,6 +170,8 @@ const Router = () => {
 
         <Route path="pricing-table" element={<ProtectedRoute><PricingTable /></ProtectedRoute>}></Route>
         <Route path="f10-purchase" element={<ProtectedRoute><F10Purchase /></ProtectedRoute>}></Route>
+        <Route path="f10-history" element={<ProtectedRoute><F10InvestHistory /></ProtectedRoute>}></Route>
+        <Route path="f10-invest-history" element={<ProtectedRoute><F10InvestHistory /></ProtectedRoute>}></Route>
         <Route path="deposit" element={<ProtectedRoute><AddFund /></ProtectedRoute>}></Route>
         <Route path="withdraw" element={<ProtectedRoute><Payout /></ProtectedRoute>}></Route>
 

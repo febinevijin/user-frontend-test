@@ -271,6 +271,29 @@
             color: #f4bd0e;
             font-weight: 600;
           }
+
+          &.pending-delay {
+            color: #38bdf8;
+            font-weight: 600;
+          }
+        }
+      }
+
+      .market-pending-sub {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.77rem;
+        color: #94a3b8;
+        line-height: 1.4;
+
+        .icon {
+          font-size: 0.95rem;
+          flex-shrink: 0;
+        }
+
+        strong {
+          font-weight: 700;
         }
       }
 

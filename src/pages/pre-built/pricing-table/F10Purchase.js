@@ -122,31 +122,98 @@ const F10Purchase = () => {
     fetchF10Details();
   }, [userInfo?.token]);
 
-  // Derived F10 metrics from real API data
-  const investedAmount = Number(
-    f10Details?.totalBalance ??
+  // Raw API metrics from f10Details
+  const totalBalance = Number(
     f10Details?.f10Balance ??
+    f10Details?.totalBalance ??
     f10Details?.investedAmount ??
+
     f10Details?.balance ??
     0
   );
-  const currentMarketValue = Number(
-    f10Details?.marketValue ??
-    f10Details?.currentMarketValue ??
-    investedAmount
+  const lockedBalance = Number(f10Details?.lockedBalance ?? 0);
+  const lockPeriodDays = Number(f10Details?.lockPeriodDays ?? 3);
+  const currentRate = Number(f10Details?.currentRate ?? 0);
+  const applicableRate = Number(f10Details?.applicableRate ?? 0);
+  const isRateApplicable = Boolean(f10Details?.isRateApplicable ?? false);
+  const rateActivationDate = f10Details?.rateActivationDate ?? null;
+  const nextUnlockDate = f10Details?.nextUnlockDate ?? null;
+
+  // Pending 1-day rate activation logic:
+  // When an investment is made, it takes 1 day delay before it is activated and the rate takes effect.
+  // The newly invested amount is in lockedBalance. If isRateApplicable is false or rateActivationDate is in the future:
+  const isActivationPending = Boolean(
+    lockedBalance > 0 &&
+    (!isRateApplicable || (rateActivationDate && new Date(rateActivationDate).getTime() > Date.now()))
   );
 
-  // 3-Day Lock-in Breakdown (Postman v3 specification)
-  const lockedBalance = Number(f10Details?.lockedBalance ?? 0);
+  const pendingActivationAmount = isActivationPending ? lockedBalance : 0;
+
+  // Main card must show the previous active invested amount that has already taken effect on the rate
+  const activeInvestedAmount = isActivationPending
+    ? Math.max(0, totalBalance - lockedBalance)
+    : totalBalance;
+
+  // Withdrawable balance (funds ready to withdraw, mature after lock period)
   const withdrawableBalance = Number(
     f10Details?.withdrawableBalance !== undefined
       ? f10Details.withdrawableBalance
-      : Math.max(0, investedAmount - lockedBalance)
+      : Math.max(0, totalBalance - lockedBalance)
   );
-  const lockPeriodDays = f10Details?.lockPeriodDays ?? 3;
-  const nextUnlockDate = f10Details?.nextUnlockDate ?? null;
 
-  const formatUnlockDate = (dateVal) => {
+  // Market value calculation for the active investment
+  let effectiveMarketValue = 0;
+  let effectiveChangePercent = "0.00";
+  let effectiveChangeAmount = "0.00";
+  let isUp = true;
+
+  if (isActivationPending) {
+    if (activeInvestedAmount > 0) {
+      const activeRate = currentRate > 0 ? currentRate : 0;
+      effectiveMarketValue = Number((activeInvestedAmount * (1 + activeRate / 100)).toFixed(2));
+      effectiveChangePercent = activeRate.toFixed(2);
+      effectiveChangeAmount = (effectiveMarketValue - activeInvestedAmount).toFixed(2);
+      isUp = effectiveMarketValue >= activeInvestedAmount;
+    } else {
+      effectiveMarketValue = 0;
+      effectiveChangePercent = "0.00";
+      effectiveChangeAmount = "0.00";
+      isUp = true;
+    }
+  } else {
+    const rawMarketValue = Number(
+      f10Details?.marketValue ??
+      f10Details?.currentMarketValue ??
+      activeInvestedAmount
+    );
+    effectiveMarketValue = rawMarketValue;
+    isUp = effectiveMarketValue >= activeInvestedAmount;
+    effectiveChangePercent = activeInvestedAmount > 0
+      ? (((effectiveMarketValue - activeInvestedAmount) / activeInvestedAmount) * 100).toFixed(2)
+      : "0.00";
+    effectiveChangeAmount = (effectiveMarketValue - activeInvestedAmount).toFixed(2);
+  }
+
+  // Format date with both date and time (e.g. Oct 2, 2026, 02:01 PM)
+  const formatDateTime = (dateVal) => {
+    if (!dateVal) return null;
+    try {
+      const d = new Date(dateVal);
+      if (isNaN(d.getTime())) return null;
+      return d.toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+    } catch {
+      return null;
+    }
+  };
+
+  const formatDateOnly = (dateVal) => {
     if (!dateVal) return null;
     try {
       const d = new Date(dateVal);
@@ -160,13 +227,29 @@ const F10Purchase = () => {
       return null;
     }
   };
-  const formattedUnlockDate = formatUnlockDate(nextUnlockDate);
 
-  const isUp = currentMarketValue >= investedAmount;
-  const changePercent = investedAmount > 0
-    ? (((currentMarketValue - investedAmount) / investedAmount) * 100).toFixed(2)
-    : "0.00";
-  const changeAmount = (currentMarketValue - investedAmount).toFixed(2);
+  // Helper to compute remaining time countdown string
+  const getTimeRemaining = (dateVal) => {
+    if (!dateVal) return "";
+    try {
+      const target = new Date(dateVal).getTime();
+      const diff = target - Date.now();
+      if (diff <= 0) return "Ready to activate";
+      const totalHours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      if (totalHours >= 24) {
+        const days = Math.floor(totalHours / 24);
+        const remHours = totalHours % 24;
+        return `${days}d ${remHours}h remaining`;
+      }
+      return `${totalHours}h ${minutes}m remaining`;
+    } catch {
+      return "";
+    }
+  };
+
+  const formattedUnlockDate = formatDateTime(nextUnlockDate) || formatDateOnly(nextUnlockDate);
+  const formattedRateActivationDate = formatDateTime(rateActivationDate);
 
   // Available wallet amounts for investing
   const depositBalance = Number(wallet?.mainBalance ?? wallet?.depositBalance ?? 0);
@@ -344,13 +427,13 @@ const F10Purchase = () => {
       {
         label: "Market Value ($)",
         data: [
-          investedAmount,
-          investedAmount > 0 ? Number((investedAmount * 1.008).toFixed(2)) : 0,
-          investedAmount > 0 ? Number((investedAmount * 1.019).toFixed(2)) : 0,
-          investedAmount > 0 ? Number((investedAmount * 1.014).toFixed(2)) : 0,
-          investedAmount > 0 ? Number((investedAmount * 1.032).toFixed(2)) : 0,
-          investedAmount > 0 ? Number((investedAmount * 1.041).toFixed(2)) : 0,
-          currentMarketValue,
+          activeInvestedAmount,
+          activeInvestedAmount > 0 ? Number((activeInvestedAmount * 1.008).toFixed(2)) : 0,
+          activeInvestedAmount > 0 ? Number((activeInvestedAmount * 1.019).toFixed(2)) : 0,
+          activeInvestedAmount > 0 ? Number((activeInvestedAmount * 1.014).toFixed(2)) : 0,
+          activeInvestedAmount > 0 ? Number((activeInvestedAmount * 1.032).toFixed(2)) : 0,
+          activeInvestedAmount > 0 ? Number((activeInvestedAmount * 1.041).toFixed(2)) : 0,
+          effectiveMarketValue,
         ],
         borderColor: isUp ? "#10b981" : "#ef4444",
         backgroundColor: (context) => {
@@ -394,9 +477,9 @@ const F10Purchase = () => {
         callbacks: {
           label: (context) => {
             const val = context.parsed.y;
-            const diff = val - investedAmount;
+            const diff = val - activeInvestedAmount;
             const sign = diff >= 0 ? "+" : "";
-            const pct = ((diff / investedAmount) * 100).toFixed(2);
+            const pct = activeInvestedAmount > 0 ? ((diff / activeInvestedAmount) * 100).toFixed(2) : "0.00";
             return ` Market Value: $${Number(val).toLocaleString(undefined, { minimumFractionDigits: 2 })} (${sign}${pct}%)`;
           },
         },
@@ -493,16 +576,22 @@ const F10Purchase = () => {
                     </div>
                   </div>
                   <div className="card-main-val">
-                    ${investedAmount.toLocaleString()}
+                    ${activeInvestedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                   <div className="card-bottom-flex">
                     <div className="balance-breakdown-sub">
                       <span className="sub-item withdrawable">
                         <Icon name="check-circle" /> Withdrawable: ${withdrawableBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
-                      <span className="sub-item locked">
-                        <Icon name="lock" /> Locked: ${lockedBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </span>
+                      {isActivationPending && pendingActivationAmount > 0 ? (
+                        <span className="sub-item pending-delay">
+                          <Icon name="clock" /> Pending (1D delay): ${pendingActivationAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                      ) : lockedBalance > 0 ? (
+                        <span className="sub-item locked">
+                          <Icon name="lock" /> Locked: ${lockedBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                      ) : null}
                     </div>
                     <button
                       type="button"
@@ -530,18 +619,90 @@ const F10Purchase = () => {
                   </div>
                   <div className="market-val-wrap">
                     <div className={`card-main-val mb-0 ${isUp ? "green" : "red"}`}>
-                      ${currentMarketValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      ${effectiveMarketValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                     <div className={`trend-pill ${isUp ? "up" : "down"}`}>
                       <span className="arrow-symbol">{isUp ? "▲" : "▼"}</span>
                       <span>
-                        {isUp ? "+" : ""}{changePercent}% ({isUp ? "+" : ""}${changeAmount})
+                        {isUp ? "+" : ""}{effectiveChangePercent}% ({isUp ? "+" : ""}${effectiveChangeAmount})
                       </span>
                     </div>
                   </div>
                 </div>
               </Col>
             </Row>
+
+            {/* Pending 1-Day Rate Activation Notice Card */}
+            {isActivationPending && pendingActivationAmount > 0 && (
+              <div className="f10-pending-activation-card mb-4">
+                <div className="pending-card-inner">
+                  <div className="pending-header-row">
+                    <div className="pending-title-group">
+                      <div className="pending-icon-pulse">
+                        <Icon name="clock" />
+                      </div>
+                      <div>
+                        <div className="d-flex align-items-center gap-2 flex-wrap mb-1">
+                          <h6 className="pending-title mb-0">
+                            Pending Investment: ${pendingActivationAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </h6>
+                          <span className="pending-badge-pill">
+                            <span className="dot-pulse"></span>
+                            <span>1-Day Rate Activation Delay</span>
+                          </span>
+                        </div>
+                        <p className="pending-subtitle mb-0">
+                          New investments take 1 day to activate before generating returns and affecting your portfolio rate.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pending-dates-grid">
+                    {/* 1. Rate Activation Date */}
+                    <div className="date-milestone-box activation">
+                      <div className="milestone-top">
+                        <span className="milestone-icon"><Icon name="spark" /></span>
+                        <span className="milestone-label">Rate Activation Date</span>
+                        {rateActivationDate && getTimeRemaining(rateActivationDate) && (
+                          <span className="milestone-tag">{getTimeRemaining(rateActivationDate)}</span>
+                        )}
+                      </div>
+                      <div className="milestone-date">
+                        {formattedRateActivationDate || "After 1 day"}
+                      </div>
+                      <div className="milestone-desc">
+                        ${pendingActivationAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} will merge into your active investment and begin earning returns at <strong>{currentRate}%</strong> daily rate.
+                      </div>
+                    </div>
+
+                    {/* 2. Capital Unlock Date */}
+                    <div className="date-milestone-box unlock">
+                      <div className="milestone-top">
+                        <span className="milestone-icon"><Icon name="shield-check" /></span>
+                        <span className="milestone-label">Next Unlock Date</span>
+                        {nextUnlockDate && getTimeRemaining(nextUnlockDate) && (
+                          <span className="milestone-tag">{getTimeRemaining(nextUnlockDate)}</span>
+                        )}
+                      </div>
+                      <div className="milestone-date">
+                        {formattedUnlockDate || `${lockPeriodDays} Days Lock`}
+                      </div>
+                      <div className="milestone-desc">
+                        {lockPeriodDays}-day capital lock-in period completes. Funds will be unlocked and eligible for withdrawal.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pending-footer-note">
+                    <Icon name="info-fill" className="me-1 text-warning" />
+                    <span>
+                      <strong>Notice:</strong> The main card above currently displays your previous active investment of <strong>${activeInvestedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> whose rate is active. Your newly invested <strong>${pendingActivationAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> will be added after 1 day on <strong>{formattedRateActivationDate || "rate activation date"}</strong>.
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Bottom Graph: Market Value Trend */}
             <div className="trading-chart-card">
@@ -771,6 +932,12 @@ const F10Purchase = () => {
                       <>{lockPeriodDays}-Day Lock-in Period</>
                     )}
                   </div>
+                  {isActivationPending && formattedRateActivationDate && (
+                    <div className="balance-note text-info mt-1" style={{ fontSize: "0.72rem" }}>
+                      <Icon name="spark" className="me-1" />
+                      Rate Activates: {formattedRateActivationDate}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -781,6 +948,7 @@ const F10Purchase = () => {
                   <span>
                     Your funds are currently locked for {lockPeriodDays} days after investment.
                     {formattedUnlockDate ? ` Next release on ${formattedUnlockDate}.` : ""}
+                    {isActivationPending && formattedRateActivationDate ? ` Rate activates on ${formattedRateActivationDate}.` : ""}
                   </span>
                 </div>
               )}

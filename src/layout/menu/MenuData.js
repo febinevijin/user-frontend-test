@@ -12,7 +12,19 @@ const menu = [
   {
     icon: "growth",
     text: "F10 Investment",
-    link: "/f10-purchase",
+    active: false,
+    subMenu: [
+      {
+        text: "F10 Investment",
+        link: "/f10-purchase",
+        newTab: false,
+      },
+      {
+        text: "History",
+        link: "/f10-history",
+        newTab: false,
+      },
+    ],
   },
   {
     icon: "tranx",

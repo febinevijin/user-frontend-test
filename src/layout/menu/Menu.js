@@ -244,7 +244,7 @@ const MenuItem = ({ icon, link, text, sub, newTab, sidebarToggle, mobileView, ba
 
   // Function to toggle sidebar in mobile view
   const toggleActionSidebar = (e) => {
-    if (mobileView && !newTab) {
+    if (!sub && mobileView && !newTab) {
       sidebarToggle(e); // Close the sidebar in mobile view after selection
     }
   };
@@ -298,6 +298,7 @@ const MenuItem = ({ icon, link, text, sub, newTab, sidebarToggle, mobileView, ba
 
   const menuToggle = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     var self = e.target.closest(".nk-menu-toggle");
     var parent = self.parentElement;
     var subMenu = self.nextSibling;

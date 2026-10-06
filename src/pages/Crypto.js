@@ -706,14 +706,6 @@ const CryptoHomePage = () => {
                 </Col>
               </Row>
             </Block>
-            {/* Graphs Section (Main Line, Weekly Line, Daily Yield Bar) */}
-            <Block className="mb-4">
-              <GraphWrapper
-                graphData={graphData?.graphData || graphData || []}
-                weeklyInterest={filterWeeklyInterestTillNow(weeklyInterest)}
-              />
-            </Block>
-
             {/* Bottom Cards: Trade Profit & Referral Link (50% / 50% width on Desktop) */}
             <Block className="pb-4">
               <Row className="g-gs">
@@ -805,6 +797,13 @@ const CryptoHomePage = () => {
                   </div>
                 </Col>
               </Row>
+            </Block>
+            {/* Graphs Section (Main Line, Weekly Line, Daily Yield Bar) */}
+            <Block className="mb-4">
+              <GraphWrapper
+                graphData={graphData?.graphData || graphData || []}
+                weeklyInterest={filterWeeklyInterestTillNow(weeklyInterest)}
+              />
             </Block>
             <Block>
               <Row>

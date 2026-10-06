@@ -283,17 +283,21 @@
         display: inline-flex;
         align-items: center;
         gap: 0.35rem;
-        font-size: 0.77rem;
-        color: #94a3b8;
-        line-height: 1.4;
+        font-size: 0.76rem;
+        color: #38bdf8;
+        line-height: 1.35;
+        font-weight: 500;
 
         .icon {
-          font-size: 0.95rem;
+          font-size: 0.88rem;
+          color: #38bdf8;
           flex-shrink: 0;
         }
 
-        strong {
+        strong,
+        .brand-gold-val {
           font-weight: 700;
+          color: #f4bd0e;
         }
       }
 
@@ -488,6 +492,28 @@
 
           .icon {
             display: none !important;
+          }
+        }
+
+        .market-pending-sub {
+          display: flex !important;
+          align-items: flex-start !important;
+          font-size: 0.62rem !important;
+          line-height: 1.25 !important;
+          gap: 0.25rem !important;
+          color: #38bdf8 !important;
+          white-space: normal !important;
+          word-break: break-word !important;
+          width: 100% !important;
+
+          .icon {
+            display: none !important;
+          }
+
+          strong,
+          .brand-gold-val {
+            color: #f4bd0e !important;
+            font-weight: 700 !important;
           }
         }
       }

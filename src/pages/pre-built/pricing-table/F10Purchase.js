@@ -99,6 +99,26 @@ const F10Purchase = () => {
       });
       const resData = data?.data || data;
       if (resData) {
+        // Fallback: If pendingRateAmount is missing from backend, calculate from recent investment transactions
+        if (resData.pendingRateAmount === undefined && resData.pendingActivationAmount === undefined) {
+          try {
+            const txRes = await axiosInstance.get("/user/f10/transactions?type=F10_INVESTMENT&limit=20", {
+              headers: { Authorization: `Bearer ${userInfo.token}` },
+            });
+            const txList = txRes?.data?.data?.transactions || [];
+            const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+            const recentInvestments = txList.filter(
+              (tx) => new Date(tx.transactionDate || tx.createdAt).getTime() > oneDayAgo
+            );
+            const pendingTotal = recentInvestments.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
+            if (pendingTotal > 0) {
+              resData.pendingRateAmount = pendingTotal;
+              resData.pendingActivationAmount = pendingTotal;
+            }
+          } catch (e) {
+            console.error("Error computing pending rate amount fallback:", e);
+          }
+        }
         setF10Details(resData);
         if (resData.wallet) {
           setWallet(resData.wallet);
@@ -127,7 +147,6 @@ const F10Purchase = () => {
     f10Details?.f10Balance ??
     f10Details?.totalBalance ??
     f10Details?.investedAmount ??
-
     f10Details?.balance ??
     0
   );
@@ -141,17 +160,25 @@ const F10Purchase = () => {
 
   // Pending 1-day rate activation logic:
   // When an investment is made, it takes 1 day delay before it is activated and the rate takes effect.
-  // The newly invested amount is in lockedBalance. If isRateApplicable is false or rateActivationDate is in the future:
-  const isActivationPending = Boolean(
-    lockedBalance > 0 &&
-    (!isRateApplicable || (rateActivationDate && new Date(rateActivationDate).getTime() > Date.now()))
+  // The newly invested amount pending 1-day activation is pendingRateAmount / pendingActivationAmount.
+  const apiPendingAmount = Number(
+    f10Details?.pendingRateAmount ??
+    f10Details?.pendingActivationAmount ??
+    0
   );
 
-  const pendingActivationAmount = isActivationPending ? lockedBalance : 0;
+  const isActivationPending = Boolean(
+    apiPendingAmount > 0 &&
+    (!rateActivationDate || new Date(rateActivationDate).getTime() > Date.now())
+  );
+
+  const pendingActivationAmount = isActivationPending ? apiPendingAmount : 0;
 
   // Main card must show the previous active invested amount that has already taken effect on the rate
   const activeInvestedAmount = isActivationPending
-    ? Math.max(0, totalBalance - lockedBalance)
+    ? (f10Details?.activeInvestedAmount !== undefined
+        ? Number(f10Details.activeInvestedAmount)
+        : Math.max(0, totalBalance - pendingActivationAmount))
     : totalBalance;
 
   // Withdrawable balance (funds ready to withdraw, mature after lock period)
@@ -161,7 +188,10 @@ const F10Purchase = () => {
       : Math.max(0, totalBalance - lockedBalance)
   );
 
-  // Market value calculation for the active investment
+  // Market value calculation for the active investment:
+  // When 1-day delay is pending, current market value shows ONLY the active investment (current added amount),
+  // and does NOT include the 1-day warning amount ($50).
+  // After the 1-day delay finishes, the pending amount is merged into active investment & current market value.
   let effectiveMarketValue = 0;
   let effectiveChangePercent = "0.00";
   let effectiveChangeAmount = "0.00";
@@ -169,8 +199,10 @@ const F10Purchase = () => {
 
   if (isActivationPending) {
     if (activeInvestedAmount > 0) {
-      const activeRate = currentRate > 0 ? currentRate : 0;
-      effectiveMarketValue = Number((activeInvestedAmount * (1 + activeRate / 100)).toFixed(2));
+      const activeRate = currentRate;
+      effectiveMarketValue = f10Details?.activeMarketValue !== undefined
+        ? Number(f10Details.activeMarketValue)
+        : Number((activeInvestedAmount * (1 + activeRate / 100)).toFixed(2));
       effectiveChangePercent = activeRate.toFixed(2);
       effectiveChangeAmount = (effectiveMarketValue - activeInvestedAmount).toFixed(2);
       isUp = effectiveMarketValue >= activeInvestedAmount;
@@ -628,81 +660,19 @@ const F10Purchase = () => {
                       </span>
                     </div>
                   </div>
+                  {isActivationPending && pendingActivationAmount > 0 && (
+                    <div className="card-bottom-flex">
+                      <div className="market-pending-sub">
+                        <Icon name="clock" />
+                        <span>
+                          Invested amount <strong className="brand-gold-val" style={{ color: "#f4bd0e", fontWeight: 700 }}>${pendingActivationAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> will be added to current market value after 1 day finish
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </Col>
             </Row>
-
-            {/* Pending 1-Day Rate Activation Notice Card */}
-            {isActivationPending && pendingActivationAmount > 0 && (
-              <div className="f10-pending-activation-card mb-4">
-                <div className="pending-card-inner">
-                  <div className="pending-header-row">
-                    <div className="pending-title-group">
-                      <div className="pending-icon-pulse">
-                        <Icon name="clock" />
-                      </div>
-                      <div>
-                        <div className="d-flex align-items-center gap-2 flex-wrap mb-1">
-                          <h6 className="pending-title mb-0">
-                            Pending Investment: ${pendingActivationAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                          </h6>
-                          <span className="pending-badge-pill">
-                            <span className="dot-pulse"></span>
-                            <span>1-Day Rate Activation Delay</span>
-                          </span>
-                        </div>
-                        <p className="pending-subtitle mb-0">
-                          New investments take 1 day to activate before generating returns and affecting your portfolio rate.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pending-dates-grid">
-                    {/* 1. Rate Activation Date */}
-                    <div className="date-milestone-box activation">
-                      <div className="milestone-top">
-                        <span className="milestone-icon"><Icon name="spark" /></span>
-                        <span className="milestone-label">Rate Activation Date</span>
-                        {rateActivationDate && getTimeRemaining(rateActivationDate) && (
-                          <span className="milestone-tag">{getTimeRemaining(rateActivationDate)}</span>
-                        )}
-                      </div>
-                      <div className="milestone-date">
-                        {formattedRateActivationDate || "After 1 day"}
-                      </div>
-                      <div className="milestone-desc">
-                        ${pendingActivationAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} will merge into your active investment and begin earning returns at <strong>{currentRate}%</strong> daily rate.
-                      </div>
-                    </div>
-
-                    {/* 2. Capital Unlock Date */}
-                    <div className="date-milestone-box unlock">
-                      <div className="milestone-top">
-                        <span className="milestone-icon"><Icon name="shield-check" /></span>
-                        <span className="milestone-label">Next Unlock Date</span>
-                        {nextUnlockDate && getTimeRemaining(nextUnlockDate) && (
-                          <span className="milestone-tag">{getTimeRemaining(nextUnlockDate)}</span>
-                        )}
-                      </div>
-                      <div className="milestone-date">
-                        {formattedUnlockDate || `${lockPeriodDays} Days Lock`}
-                      </div>
-                      <div className="milestone-desc">
-                        {lockPeriodDays}-day capital lock-in period completes. Funds will be unlocked and eligible for withdrawal.
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pending-footer-note">
-                    <Icon name="info-fill" className="me-1 text-warning" />
-                    <span>
-                      <strong>Notice:</strong> The main card above currently displays your previous active investment of <strong>${activeInvestedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> whose rate is active. Your newly invested <strong>${pendingActivationAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> will be added after 1 day on <strong>{formattedRateActivationDate || "rate activation date"}</strong>.
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Bottom Graph: Market Value Trend */}
             <div className="trading-chart-card">

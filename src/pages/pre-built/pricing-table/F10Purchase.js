@@ -143,6 +143,11 @@ const F10Purchase = () => {
   }, [userInfo?.token]);
 
   // Raw API metrics from f10Details
+  const totalInvested = Number(
+    f10Details?.totalInvested ??
+    f10Details?.investedAmount ??
+    0
+  );
   const totalBalance = Number(
     f10Details?.f10Balance ??
     f10Details?.totalBalance ??
@@ -177,8 +182,8 @@ const F10Purchase = () => {
   // Main card must show the previous active invested amount that has already taken effect on the rate
   const activeInvestedAmount = isActivationPending
     ? (f10Details?.activeInvestedAmount !== undefined
-        ? Number(f10Details.activeInvestedAmount)
-        : Math.max(0, totalBalance - pendingActivationAmount))
+      ? Number(f10Details.activeInvestedAmount)
+      : Math.max(0, totalBalance - pendingActivationAmount))
     : totalBalance;
 
   // Withdrawable balance (funds ready to withdraw, mature after lock period)
@@ -608,7 +613,7 @@ const F10Purchase = () => {
                     </div>
                   </div>
                   <div className="card-main-val">
-                    ${activeInvestedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    ${totalInvested.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                   <div className="card-bottom-flex">
                     <div className="balance-breakdown-sub">

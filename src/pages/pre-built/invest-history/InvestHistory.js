@@ -724,9 +724,9 @@ const InvestHistory = () => {
                 <DataTableRow className='text-white'>
                   <span>Purchase Date</span>
                 </DataTableRow>
-                <DataTableRow className='text-white'>
+                {/* <DataTableRow className='text-white'>
                   <span>Matured On </span>
-                </DataTableRow>
+                </DataTableRow> */}
                 <DataTableRow className='text-white'>
                   <span>Status</span>
                 </DataTableRow>
@@ -769,9 +769,9 @@ const InvestHistory = () => {
                     <DataTableRow className="text-nowrap text-white">
                       <span>{new Date(item.purchasedDate).toLocaleDateString()}</span>
                     </DataTableRow>
-                    <DataTableRow className="text-nowrap text-white">
+                    {/* <DataTableRow className="text-nowrap text-white">
                       <span>{new Date(item.planMaturityDate).toLocaleDateString()}</span>
-                    </DataTableRow>
+                    </DataTableRow> */}
                     <DataTableRow>
                       <Badge
                         className="badge-sm badge-dim"

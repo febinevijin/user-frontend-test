@@ -10,6 +10,11 @@ const menu = [
     link: "/pricing-table",
   },
   {
+    icon: "tranx",
+    text: "Invest History",
+    link: "/invest-history",
+  },
+  {
     icon: "growth",
     text: "F10 Investment",
     active: false,
@@ -25,11 +30,6 @@ const menu = [
         newTab: false,
       },
     ],
-  },
-  {
-    icon: "tranx",
-    text: "Invest History",
-    link: "/invest-history",
   },
   {
     icon: "wallet",

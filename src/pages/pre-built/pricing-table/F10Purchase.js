@@ -202,15 +202,21 @@ const F10Purchase = () => {
   let effectiveChangeAmount = "0.00";
   let isUp = true;
 
+  const rateToApply = Number(
+    f10Details?.applicableRate !== undefined && f10Details?.applicableRate !== null
+      ? f10Details.applicableRate
+      : (f10Details?.currentRate ?? 0)
+  );
+
   if (isActivationPending) {
     if (activeInvestedAmount > 0) {
-      const activeRate = currentRate;
+      const activeRate = rateToApply;
       effectiveMarketValue = f10Details?.activeMarketValue !== undefined
         ? Number(f10Details.activeMarketValue)
         : Number((activeInvestedAmount * (1 + activeRate / 100)).toFixed(2));
       effectiveChangePercent = activeRate.toFixed(2);
       effectiveChangeAmount = (effectiveMarketValue - activeInvestedAmount).toFixed(2);
-      isUp = effectiveMarketValue >= activeInvestedAmount;
+      isUp = activeRate >= 0;
     } else {
       effectiveMarketValue = 0;
       effectiveChangePercent = "0.00";
@@ -224,11 +230,15 @@ const F10Purchase = () => {
       activeInvestedAmount
     );
     effectiveMarketValue = rawMarketValue;
-    isUp = effectiveMarketValue >= activeInvestedAmount;
-    effectiveChangePercent = activeInvestedAmount > 0
-      ? (((effectiveMarketValue - activeInvestedAmount) / activeInvestedAmount) * 100).toFixed(2)
-      : "0.00";
-    effectiveChangeAmount = (effectiveMarketValue - activeInvestedAmount).toFixed(2);
+    const activeRate = rateToApply;
+    isUp = activeRate >= 0;
+    effectiveChangePercent = activeRate.toFixed(2);
+    const changeAmt = activeInvestedAmount > 0
+      ? (f10Details?.activeMarketValue !== undefined
+          ? Number(f10Details.activeMarketValue) - activeInvestedAmount
+          : activeInvestedAmount * (activeRate / 100))
+      : 0;
+    effectiveChangeAmount = changeAmt.toFixed(2);
   }
 
   // Format date with both date and time (e.g. Oct 2, 2026, 02:01 PM)
@@ -568,7 +578,7 @@ const F10Purchase = () => {
             <div className="invest-callout-banner">
               <div className="banner-text-wrap">
                 <h5>Are you planning to invest?</h5>
-                <p>Use your available wallet balance to invest in the F10 Plan your funds securely.</p>
+                <p>Use your available wallet balance to invest in the F10 Investment your funds securely.</p>
               </div>
               <div className="banner-btn-group">
                 <button
@@ -661,7 +671,7 @@ const F10Purchase = () => {
                     <div className={`trend-pill ${isUp ? "up" : "down"}`}>
                       <span className="arrow-symbol">{isUp ? "▲" : "▼"}</span>
                       <span>
-                        {isUp ? "+" : ""}{effectiveChangePercent}% ({isUp ? "+" : ""}${effectiveChangeAmount})
+                        {isUp ? "+" : "-"}{Math.abs(Number(effectiveChangePercent)).toFixed(2)}% ({isUp ? "+" : "-"}${Math.abs(Number(effectiveChangeAmount)).toFixed(2)})
                       </span>
                     </div>
                   </div>
@@ -711,7 +721,7 @@ const F10Purchase = () => {
               <div className="modal-header-wrap mb-4">
                 <div>
                   <h5 className="text-white mb-1 font-weight-bold" style={{ fontSize: "1.2rem", letterSpacing: "-0.01em" }}>
-                    Invest in F10 Plan
+                    Invest in F10 Investment
                   </h5>
                   <p className="mb-0" style={{ fontSize: "0.82rem", color: "#94a3b8" }}>
                     Quick and secure investment using your wallet balance

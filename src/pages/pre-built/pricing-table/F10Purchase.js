@@ -187,10 +187,7 @@ const F10Purchase = () => {
     : totalBalance;
 
   // Withdrawable value directly from backend
-  const withdrawableBalance = Number(
-    f10Details?.withdrawableMarketValue ??
-    0
-  );
+  const withdrawableBalance = Number(f10Details?.withdrawableMarketValue);
 
   // Market value calculation for the active investment:
   // When 1-day delay is pending, current market value shows ONLY the active investment (current added amount),
@@ -203,10 +200,7 @@ const F10Purchase = () => {
   );
 
   // Directly use the backend market value without frontend checking
-  const effectiveMarketValue = Number(
-    f10Details?.activeMarketValue ??
-    0
-  );
+  const effectiveMarketValue = Number(f10Details?.currentMarketValue);
 
   const activeRate = rateToApply;
   const isUp = activeRate >= 0;

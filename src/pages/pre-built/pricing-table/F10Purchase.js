@@ -186,60 +186,37 @@ const F10Purchase = () => {
       : Math.max(0, totalBalance - pendingActivationAmount))
     : totalBalance;
 
-  // Withdrawable balance (funds ready to withdraw, mature after lock period)
+  // Withdrawable value directly from backend
   const withdrawableBalance = Number(
-    f10Details?.withdrawableBalance !== undefined
-      ? f10Details.withdrawableBalance
-      : Math.max(0, totalBalance - lockedBalance)
+    f10Details?.withdrawableMarketValue ??
+    0
   );
 
   // Market value calculation for the active investment:
   // When 1-day delay is pending, current market value shows ONLY the active investment (current added amount),
   // and does NOT include the 1-day warning amount ($50).
   // After the 1-day delay finishes, the pending amount is merged into active investment & current market value.
-  let effectiveMarketValue = 0;
-  let effectiveChangePercent = "0.00";
-  let effectiveChangeAmount = "0.00";
-  let isUp = true;
-
   const rateToApply = Number(
     f10Details?.applicableRate !== undefined && f10Details?.applicableRate !== null
       ? f10Details.applicableRate
       : (f10Details?.currentRate ?? 0)
   );
 
-  if (isActivationPending) {
-    if (activeInvestedAmount > 0) {
-      const activeRate = rateToApply;
-      effectiveMarketValue = f10Details?.activeMarketValue !== undefined
-        ? Number(f10Details.activeMarketValue)
-        : Number((activeInvestedAmount * (1 + activeRate / 100)).toFixed(2));
-      effectiveChangePercent = activeRate.toFixed(2);
-      effectiveChangeAmount = (effectiveMarketValue - activeInvestedAmount).toFixed(2);
-      isUp = activeRate >= 0;
-    } else {
-      effectiveMarketValue = 0;
-      effectiveChangePercent = "0.00";
-      effectiveChangeAmount = "0.00";
-      isUp = true;
-    }
-  } else {
-    const rawMarketValue = Number(
-      f10Details?.marketValue ??
-      f10Details?.currentMarketValue ??
-      activeInvestedAmount
-    );
-    effectiveMarketValue = rawMarketValue;
-    const activeRate = rateToApply;
-    isUp = activeRate >= 0;
-    effectiveChangePercent = activeRate.toFixed(2);
-    const changeAmt = activeInvestedAmount > 0
-      ? (f10Details?.activeMarketValue !== undefined
-          ? Number(f10Details.activeMarketValue) - activeInvestedAmount
-          : activeInvestedAmount * (activeRate / 100))
-      : 0;
-    effectiveChangeAmount = changeAmt.toFixed(2);
-  }
+  // Directly use the backend market value without frontend checking
+  const effectiveMarketValue = Number(
+    f10Details?.activeMarketValue ??
+    0
+  );
+
+  const activeRate = rateToApply;
+  const isUp = activeRate >= 0;
+  const effectiveChangePercent = activeRate.toFixed(2);
+  const changeAmt = activeInvestedAmount > 0
+    ? (f10Details?.activeMarketValue !== undefined
+      ? Number(f10Details.activeMarketValue) - activeInvestedAmount
+      : activeInvestedAmount * (activeRate / 100))
+    : 0;
+  const effectiveChangeAmount = changeAmt.toFixed(2);
 
   // Format date with both date and time (e.g. Oct 2, 2026, 02:01 PM)
   const formatDateTime = (dateVal) => {
